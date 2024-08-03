@@ -34,6 +34,26 @@ func (i *InMemoryTodoStorage) Store(t *Todo) {
 	i.Todos = append(i.Todos, t)
 }
 
+func (i *InMemoryTodoStorage) GetById(id uuid.UUID) *Todo {
+	for _, e := range i.Todos {
+		if e.Id == id {
+			return e
+		}
+	}
+	return nil
+}
+
+func (i *InMemoryTodoStorage) DeleteById(id uuid.UUID) bool {
+	for idx, e := range i.Todos {
+		if e.Id == id {
+			i.Todos[idx] = nil
+			i.Todos = append(i.Todos[:idx], i.Todos[idx+1:]...)
+			return true
+		}
+	}
+	return false
+}
+
 type TodoOption func(*Todo)
 
 type Todo struct {
