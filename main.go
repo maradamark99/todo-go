@@ -55,11 +55,6 @@ func main() {
 		if !todoStorage.DeleteById(uuid) {
 			c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", id))
 			return nil
-			if e.Id == uuid {
-				todoStorage.Todos = append(todos[:i], todos[i+1:]...)
-				c.Status(fiber.StatusOK)
-				return nil
-			}
 		}
 		return c.SendStatus(fiber.StatusOK)
 	})
@@ -75,8 +70,6 @@ func main() {
 		if todo == nil {
 			c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", uuid.String()))
 			return nil
-				return nil
-			}
 		}
 
 		return c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", id))
