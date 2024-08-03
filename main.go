@@ -35,7 +35,8 @@ func main() {
 		}
 
 		if body.Deadline.After(now) {
-			go scheduler.Schedule(body.Deadline.Sub(now), func() {
+			// this needs change
+			go scheduler.ScheduleOnce(body.Deadline.Sub(now), func() {
 				log.Info(body)
 			})
 		}
@@ -51,16 +52,16 @@ func main() {
 			c.Status(fiber.StatusBadRequest).SendString(err.Error())
 			return err
 		}
-		todos := todoStorage.Todos
-		// move this into a separate func that takes another func as arg
-		for i, e := range todos {
+		if !todoStorage.DeleteById(uuid) {
+			c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", id))
+			return nil
 			if e.Id == uuid {
 				todoStorage.Todos = append(todos[:i], todos[i+1:]...)
 				c.Status(fiber.StatusOK)
 				return nil
 			}
 		}
-		return c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", id))
+		return c.SendStatus(fiber.StatusOK)
 	})
 
 	app.Get("/:id", func(c *fiber.Ctx) error {
@@ -70,13 +71,14 @@ func main() {
 			c.Status(fiber.StatusBadRequest).SendString(err.Error())
 			return err
 		}
-		todos := todoStorage.Todos
-		for _, e := range todos {
-			if e.Id == uuid {
-				c.Status(fiber.StatusOK).JSON(e)
+		todo := todoStorage.GetById(uuid)
+		if todo == nil {
+			c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", uuid.String()))
+			return nil
 				return nil
 			}
 		}
+
 		return c.Status(fiber.StatusNotFound).SendString(fmt.Sprintf("Todo with id: %s not found", id))
 	})
 

@@ -6,7 +6,7 @@ import (
 
 type ToSchedule func()
 
-func Schedule(duration time.Duration, fn ToSchedule) {
+func ScheduleOnce(duration time.Duration, fn ToSchedule) {
 	timer := time.NewTimer(duration)
 	<-timer.C
 	fn()
