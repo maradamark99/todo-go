@@ -5,11 +5,6 @@ pipeline {
         parallelsAlwaysFailFast()
     }
     stages {
-        stage('checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/maradamark99/todo-go.git'
-            }
-        }
         stage('build') {
             steps {
                 sh 'go build -o ./out/app *.go'
